@@ -629,6 +629,20 @@ dataCubes:
 pageMustLoadTimeout: 5000
 
 customization:
+  cssVariables:
+    brand: rgb(0, 77, 179)
+    brand-secondary: '#c562a5'
+    background-brand: rgb(0, 77, 179)
+    background-brand-light: rgba(0, 77, 179, 0.14)
+    hightlight-border: rgb(0, 77, 179)
+    hover: rgba(161, 202, 232, 0.2)
+    item-dimension: rgba(0, 77, 179, 0.14)
+    item-dimension-hover: rgba(0, 77, 179, 0.24)
+    item-measure: rgba(0, 77, 179, 0.14)
+    item-measure-hover: rgba(0, 77, 179, 0.24)
+    main-time-line: rgb(161, 202, 232)
+    main-time-area: rgba(161, 202, 232, 0.14)
+  headerBackground: rgb(0, 77, 179)
   messages:
     dataCubeNotFound: |
       Oh no! We looked hard but couldn't find your data cube. Sorry.
