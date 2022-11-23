@@ -38,7 +38,7 @@ export interface HomeViewState {
 }
 
 function goToDataCube(name: string) {
-  window.location.hash = "#" + name;
+  window.location.hash = "#data/" + name;
 }
 
 export class HomeView extends React.Component<HomeViewProps, HomeViewState> {

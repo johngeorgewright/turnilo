@@ -1,7 +1,5 @@
 /*
- * Copyright 2015-2016 Imply Data, Inc.
  * Copyright 2017-2019 Allegro.pl
- * Copyright 2022-2024 DMG Media
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +14,31 @@
  * limitations under the License.
  */
 
-import React from "react";
+// Hardcoded dashboards config
 
-export default class ChartView extends React.Component {
-  render() {
-    return <p>Hello</p>;
-  }
+export interface Dashboard {
+  cube: string;
+  panels: DashboardPanel[];
+  title: string;
 }
+
+export interface DashboardPanel {
+  measures: string[];
+  splits?: string[];
+}
+
+export const dashboards: Record<string, Dashboard> = {
+  covid19: {
+    cube: "covid19",
+    title: "Covid19",
+    panels: [
+      {
+        measures: ["cases"]
+      },
+      {
+        measures: ["deaths"],
+        splits: ["time"]
+      }
+    ]
+  }
+};

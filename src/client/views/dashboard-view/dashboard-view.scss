@@ -1,0 +1,30 @@
+@import '../../imports';
+$control-panel-height: $control-tile-height + 2px;
+
+.dashboard-view {
+  height: 100%;
+  padding-top: 42px;
+
+  .tile-row {
+    border-bottom-color: var(--background-base);
+    border-bottom-style: solid;
+    border-bottom-width: 2px;
+    height: 3em;
+  }
+
+  .dashboard-panels {
+    align-content: stretch;
+    align-items: stretch;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    justify-items: space-evenly;
+    height: 100%;
+
+    .dashboard-panel {
+      min-width: 400px;
+      background-color: #fff;
+      flex-grow: 1;
+    }
+  }
+}

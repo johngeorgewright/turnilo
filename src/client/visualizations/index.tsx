@@ -37,7 +37,7 @@ export const CONTROLS: Partial<Record<Visualization, ComponentType<Visualization
 export function getVisualizationComponent(name: Visualization) {
   return function Visualization(props: VisualizationProps) {
     const Chart = getChartComponent(name);
-    const Controls = CONTROLS[name] || DefaultVisualizationControls;
+    const Controls = getVisualizationControls(name);
     return <>
       <Controls {...props} />
       <Chart {...props} />
@@ -50,4 +50,8 @@ export function getChartComponent(name: Visualization) {
     const Chart = React.lazy(CHARTS[name]);
     return <Chart {...props} />;
   };
+}
+
+export function getVisualizationControls(name: Visualization) {
+  return CONTROLS[name] || DefaultVisualizationControls;
 }

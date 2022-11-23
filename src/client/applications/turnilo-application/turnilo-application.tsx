@@ -33,12 +33,12 @@ import { OauthMessageView } from "../../oauth/oauth-message-view";
 import { Ajax } from "../../utils/ajax/ajax";
 import { reportError } from "../../utils/error-reporter/error-reporter";
 import { replaceHash } from "../../utils/url/url";
-import ChartView from "../../views/chart-view/chart-view";
 import { CubeView } from "../../views/cube-view/cube-view";
+import DashboardView from "../../views/dashboard-view/dashboard-view";
 import { GeneralError } from "../../views/error-view/general-error";
 import { HomeView } from "../../views/home-view/home-view";
 import "./turnilo-application.scss";
-import { chart, cube, generalError, home, oauthCodeHandler, oauthMessageView, View } from "./view";
+import { cube, generalError, home, oauthCodeHandler, oauthMessageView, View, dashboard } from "./view";
 
 export interface TurniloApplicationProps {
   version: string;
@@ -125,9 +125,16 @@ export class TurniloApplication extends React.Component<TurniloApplicationProps,
   getViewFromHash(hash: string): View {
     if (hash === "") return home;
 
-    const { cubeName, definition } = this.parseCubeHash(hash);
-    const search = new URLSearchParams(location.search);
-    return search.has("chart") ? chart(cubeName, definition) : cube(cubeName, definition);
+    const [path, ...params] = hash.split("/");
+
+    switch (path) {
+      case "data":
+        return cube(params[0], params.slice(1).join("/"));
+      case "dashboard":
+        return dashboard(params[0], params.slice(1).join("/"));
+      default:
+        throw new Error(`View for ${hash} is not configured.`);
+    }
   }
 
   changeHash(hash: string, force = false): void {
@@ -145,12 +152,12 @@ export class TurniloApplication extends React.Component<TurniloApplicationProps,
   }
 
   updateCubeAndEssenceInHash = (dataCube: ClientDataCube, essence: Essence, force: boolean) => {
-    const newHash = `${dataCube.name}/${(urlHashConverter.toHash(essence))}`;
+    const newHash = `data/${dataCube.name}/${(urlHashConverter.toHash(essence))}`;
     this.changeHash(newHash, force);
   };
 
   urlForEssence = (dataCube: ClientDataCube, essence: Essence): string => {
-    return `${this.getUrlPrefix()}#${dataCube.name}/${(urlHashConverter.toHash(essence))}`;
+    return `${this.getUrlPrefix()}#data/${dataCube.name}/${(urlHashConverter.toHash(essence))}`;
   };
 
   getUrlPrefix(): string {
@@ -193,17 +200,6 @@ export class TurniloApplication extends React.Component<TurniloApplicationProps,
                       dataCubes={sources.dataCubes}/>}
         </SourcesProvider>;
 
-      case "chart":
-        return <SourcesProvider appSettings={appSettings}>
-          {({ sources }) => {
-            const dataCube = NamedArray.findByName(sources.dataCubes, view.cubeName);
-            if (dataCube === undefined) {
-              return <DataCubeNotFound customization={customization}/>;
-            }
-            return <ChartView />;
-          }}
-        </SourcesProvider>;
-
       case "cube":
         return <SourcesProvider appSettings={appSettings}>
           {({ sources }) => {
@@ -227,6 +223,21 @@ export class TurniloApplication extends React.Component<TurniloApplicationProps,
             />;
           }}
         </SourcesProvider>;
+
+      case "dashboard":
+        return (
+          <SourcesProvider appSettings={appSettings}>
+            {({ sources }) => (
+              <DashboardView
+                appSettings={appSettings}
+                hash={view.hash}
+                id={view.dashboardName}
+                initTimekeeper={timekeeper}
+                sources={sources}
+              />
+            )}
+          </SourcesProvider>
+        );
 
       case "general-error":
         return <GeneralError errorId={view.errorId}/>;
