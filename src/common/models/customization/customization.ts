@@ -16,9 +16,10 @@
  */
 
 import { Timezone } from "chronoshift";
-import { LOGGER } from "../../logger/logger";
+import { Logger } from "../../logger/logger";
 import { assoc } from "../../utils/functional/functional";
-import { isTruthy } from "../../utils/general/general";
+import { isNil, isTruthy } from "../../utils/general/general";
+import { DEFAULT_COLORS, VisualizationColors } from "../colors/colors";
 import { ExternalView, ExternalViewValue } from "../external-view/external-view";
 import { fromConfig as localeFromConfig, Locale, LocaleJS, serialize as serializeLocale } from "../locale/locale";
 import { fromConfig as urlShortenerFromConfig, UrlShortener, UrlShortenerDef } from "../url-shortener/url-shortener";
@@ -87,8 +88,6 @@ const availableCssVariables = [
   "item-measure-hover",
   "item-measure-text",
   "item-measure",
-  "main-time-area",
-  "main-time-line",
   "negative",
   "pinboard-icon",
   "positive",
@@ -120,6 +119,7 @@ export interface Customization {
   cssVariables: CssVariables;
   locale: Locale;
   messages: Messages;
+  visualizationColors: VisualizationColors;
 }
 
 export interface CustomizationJS {
@@ -133,6 +133,7 @@ export interface CustomizationJS {
   sentryDSN?: string;
   cssVariables?: Record<string, string>;
   messages?: Messages;
+  visualizationColors?: Partial<VisualizationColors>;
 }
 
 export interface SerializedCustomization {
@@ -144,6 +145,7 @@ export interface SerializedCustomization {
   sentryDSN?: string;
   locale: Locale;
   messages: Messages;
+  visualizationColors: VisualizationColors;
 }
 
 export interface ClientCustomization {
@@ -155,14 +157,15 @@ export interface ClientCustomization {
   sentryDSN?: string;
   locale: Locale;
   messages: Messages;
+  visualizationColors: VisualizationColors;
 }
 
-function verifyCssVariables(cssVariables: Record<string, string>): CssVariables {
+function verifyCssVariables(cssVariables: Record<string, string>, logger: Logger): CssVariables {
   return Object.keys(cssVariables)
     .filter(variableName => {
       const valid = availableCssVariables.indexOf(variableName) > -1;
       if (!valid) {
-        LOGGER.warn(`Unsupported css variables "${variableName}" found.`);
+        logger.warn(`Unsupported css variables "${variableName}" found.`);
       }
       return valid;
     })
@@ -171,7 +174,13 @@ function verifyCssVariables(cssVariables: Record<string, string>): CssVariables 
     }, {});
 }
 
-export function fromConfig(config: CustomizationJS = {}): Customization {
+function readVisualizationColors(config: CustomizationJS): VisualizationColors {
+  if (isNil(config.visualizationColors)) return DEFAULT_COLORS;
+
+  return { ...DEFAULT_COLORS, ...config.visualizationColors };
+}
+
+export function fromConfig(config: CustomizationJS = {}, logger: Logger): Customization {
   const {
     title = DEFAULT_TITLE,
     headerBackground,
@@ -193,22 +202,25 @@ export function fromConfig(config: CustomizationJS = {}): Customization {
     ? configExternalViews.map(ExternalView.fromJS)
     : [];
 
+  const visualizationColors = readVisualizationColors(config);
+
   return {
     title,
     headerBackground,
     customLogoSvg,
     sentryDSN,
-    cssVariables: verifyCssVariables(cssVariables),
+    cssVariables: verifyCssVariables(cssVariables, logger),
     urlShortener: urlShortenerFromConfig(urlShortener),
     timezones,
-    locale: localeFromConfig(locale),
+    locale: localeFromConfig(locale, logger),
     messages,
-    externalViews
+    externalViews,
+    visualizationColors
   };
 }
 
 export function serialize(customization: Customization): SerializedCustomization {
-  const { customLogoSvg, timezones, headerBackground, locale, externalViews, sentryDSN, urlShortener, messages } = customization;
+  const { customLogoSvg, timezones, headerBackground, locale, externalViews, sentryDSN, urlShortener, messages, visualizationColors } = customization;
   return {
     customLogoSvg,
     externalViews,
@@ -217,7 +229,8 @@ export function serialize(customization: Customization): SerializedCustomization
     sentryDSN,
     locale: serializeLocale(locale),
     timezones: timezones.map(t => t.toJS()),
-    messages
+    messages,
+    visualizationColors
   };
 }
 

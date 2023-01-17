@@ -17,7 +17,9 @@
 
 import React, { ComponentType } from "react";
 import { Visualization } from "../../common/models/visualization-manifest/visualization-manifest";
+import { TimeSeriesVisualizationControls } from "../components/timeseries-visualization-controls/visualization-controls";
 import { DefaultVisualizationControls, VisualizationControlsBaseProps, VisualizationProps } from "../views/cube-view/center-panel/center-panel";
+import { BarChartVisualizationControls } from "./bar-chart/visualization-controls";
 import { GridVisualizationControls } from "./grid/visualization-controls";
 
 export const CHARTS: Record<Visualization, () => Promise<{ default: ComponentType<VisualizationProps> }>> = {
@@ -31,7 +33,9 @@ export const CHARTS: Record<Visualization, () => Promise<{ default: ComponentTyp
 };
 
 export const CONTROLS: Partial<Record<Visualization, ComponentType<VisualizationControlsBaseProps>>> = {
-  grid: GridVisualizationControls
+  "bar-chart": BarChartVisualizationControls,
+  "line-chart": TimeSeriesVisualizationControls,
+  "grid": GridVisualizationControls
 };
 
 export function getVisualizationComponent(name: Visualization) {

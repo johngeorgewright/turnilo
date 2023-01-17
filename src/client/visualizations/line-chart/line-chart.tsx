@@ -70,13 +70,13 @@ class LineChartComponent extends React.Component<ChartProps> {
               essence={essence}
               xScale={scale}
               xTicks={ticks}
-              dataset={data} />
+              dataset={data}/>
           </div>
           <XAxis
             width={stage.width}
             ticks={ticks}
             scale={scale}
-            timezone={essence.timezone} />
+            timezone={essence.timezone}/>
         </div>;
       }}
     </InteractionController>;

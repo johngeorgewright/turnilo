@@ -60,7 +60,7 @@ interface VisualizationControlsProps extends VisualizationControlsBaseProps {
 }
 
 export const DefaultVisualizationControls: React.FunctionComponent<VisualizationControlsBaseProps> = props => {
-  return <VisualizationControls {...props} splitTilesRow={DefaultSplitTilesRow}/>;
+  return  <VisualizationControls {...props} splitTilesRow={DefaultSplitTilesRow}/>;
 };
 
 export const VisualizationControls: React.FunctionComponent<VisualizationControlsProps> = props => {

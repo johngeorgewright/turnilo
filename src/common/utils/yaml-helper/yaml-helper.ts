@@ -16,6 +16,7 @@
  */
 
 import { AttributeInfo } from "plywood";
+import { Logger } from "../../logger/logger";
 import { AppSettings } from "../../models/app-settings/app-settings";
 import {
   Cluster, DEFAULT_INTROSPECTION_STRATEGY,
@@ -36,7 +37,7 @@ function spaces(n: number) {
 }
 
 function extend(a: any, b: any): any {
-  for (let key in a) {
+  for (const key in a) {
     b[key] = a[key];
   }
 
@@ -92,13 +93,13 @@ function yamlPropAdder(lines: string[], withComments: boolean, options: PropAdde
   }
 }
 
-function getYamlPropAdder(object: any, labels: any, lines: string[], withComments = false) {
+function getYamlPropAdder(object: any, labels: any, lines: string[], withComments: boolean, logger: Logger) {
   const adder = (propName: string, additionalOptions?: { defaultValue?: any }) => {
-    let propVerbiage = labels[propName];
+    const propVerbiage = labels[propName];
     let comment: string;
 
     if (!propVerbiage) {
-      console.warn(`No labels for ${propName}, please fix this in 'common/models/labels.ts'`);
+      logger.warn(`No labels for ${propName}, please fix this in 'common/models/labels.ts'`);
       comment = "";
     } else {
       comment = propVerbiage.description;
@@ -116,11 +117,11 @@ function getYamlPropAdder(object: any, labels: any, lines: string[], withComment
   return { add: adder };
 }
 
-function customizationToYAML(customization: Customization, withComments: boolean): string[] {
+function customizationToYAML(customization: Customization, withComments: boolean, logger: Logger): string[] {
   const { timezones, externalViews, cssVariables } = customization;
-  let lines: string[] = [];
+  const lines: string[] = [];
 
-  getYamlPropAdder(customization, CUSTOMIZATION, lines, withComments)
+  getYamlPropAdder(customization, CUSTOMIZATION, lines, withComments, logger)
     .add("customLogoSvg")
     .add("headerBackground")
     .add("sentryDSN")
@@ -153,12 +154,12 @@ function customizationToYAML(customization: Customization, withComments: boolean
   return lines.map(line => `${pad}${line}`);
 }
 
-function clusterToYAML(cluster: Cluster, withComments: boolean): string[] {
-  let lines: string[] = [
+function clusterToYAML(cluster: Cluster, withComments: boolean, logger: Logger): string[] {
+  const lines: string[] = [
     `name: ${cluster.name}`
   ];
 
-  let props = getYamlPropAdder(cluster, CLUSTER, lines, withComments);
+  const props = getYamlPropAdder(cluster, CLUSTER, lines, withComments, logger);
 
   props
     .add("url")
@@ -191,7 +192,7 @@ function clusterToYAML(cluster: Cluster, withComments: boolean): string[] {
 }
 
 function attributeToYAML(attribute: AttributeInfo): string[] {
-  let lines: string[] = [
+  const lines: string[] = [
     `name: ${attribute.name}`,
     `type: ${attribute.type}`
   ];
@@ -205,7 +206,7 @@ function attributeToYAML(attribute: AttributeInfo): string[] {
 }
 
 function dimensionToYAML(dimension: Dimension): string[] {
-  let lines: string[] = [
+  const lines: string[] = [
     `name: ${dimension.name}`,
     `title: ${dimension.title}`
   ];
@@ -226,7 +227,7 @@ function dimensionToYAML(dimension: Dimension): string[] {
 }
 
 function measureToYAML(measure: Measure): string[] {
-  let lines: string[] = [
+  const lines: string[] = [
     `name: ${measure.name}`,
     `title: ${measure.title}`
   ];
@@ -256,7 +257,7 @@ function sourceToYAML(source: Source): string {
   return yamlArray(source);
 }
 
-function dataCubeToYAML(dataCube: DataCube, withComments: boolean): string[] {
+function dataCubeToYAML(dataCube: DataCube, withComments: boolean, logger: Logger): string[] {
   let lines: string[] = [
     `name: ${dataCube.name}`,
     `title: ${dataCube.title}`,
@@ -281,7 +282,7 @@ function dataCubeToYAML(dataCube: DataCube, withComments: boolean): string[] {
   }
   lines.push("");
 
-  let addProps = getYamlPropAdder(dataCube, DATA_CUBE, lines, withComments);
+  const addProps = getYamlPropAdder(dataCube, DATA_CUBE, lines, withComments, logger);
 
   addProps
     .add("defaultTimezone", { defaultValue: DEFAULT_DEFAULT_TIMEZONE })
@@ -469,7 +470,7 @@ export function printExtra(extra: Extra, withComments: boolean): string {
   return lines.join("\n");
 }
 
-export function sourcesToYaml(sources: Sources, withComments: boolean): string {
+export function sourcesToYaml(sources: Sources, withComments: boolean, logger: Logger): string {
   const { dataCubes, clusters } = sources;
 
   if (!dataCubes.length) throw new Error("Could not find any data cubes, please verify network connectivity");
@@ -478,16 +479,16 @@ export function sourcesToYaml(sources: Sources, withComments: boolean): string {
 
   if (clusters.length) {
     lines.push("clusters:");
-    lines = lines.concat.apply(lines, clusters.map(c => clusterToYAML(c, withComments)));
+    lines = lines.concat.apply(lines, clusters.map(c => clusterToYAML(c, withComments, logger)));
   }
 
   lines.push("dataCubes:");
-  lines = lines.concat.apply(lines, dataCubes.map(d => dataCubeToYAML(d, withComments)));
+  lines = lines.concat.apply(lines, dataCubes.map(d => dataCubeToYAML(d, withComments, logger)));
 
   return lines.join("\n");
 }
 
-export function appSettingsToYaml(settings: AppSettings, withComments: boolean): string {
+export function appSettingsToYaml(settings: AppSettings, withComments: boolean, logger: Logger): string {
   // TODO: shouldn't we print oauth and clientTimeout?
   const { customization, oauth, clientTimeout } = settings;
 
@@ -495,7 +496,7 @@ export function appSettingsToYaml(settings: AppSettings, withComments: boolean):
 
   if (customization) {
     lines.push("customization:");
-    lines.push(...customizationToYAML(customization, withComments));
+    lines.push(...customizationToYAML(customization, withComments, logger));
   }
 
   return lines.join("\n");

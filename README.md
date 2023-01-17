@@ -2,6 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/turnilo.svg)](https://www.npmjs.org/package/turnilo)
 [![build status](https://github.com/allegro/turnilo/workflows/Build/badge.svg)](https://github.com/allegro/turnilo/actions)
+[![Join our Slack chat](https://img.shields.io/badge/slack-chat-purple.svg?logo=slack)](https://join.slack.com/t/turnilo/shared_invite/enQtOTI4ODcxMjcyNjU2LTFlOTk5YWZlOGMyZDZhZWU3MGNjNDRhZmI1Y2UzNDlkZmY3YzYxYTJhYzIzMzc0MTc3MzA3OTE1NmQ5NDI1M2I)
 
 Turnilo is a business intelligence, data exploration and visualization web application for [Apache Druid](https://druid.apache.org).
 Turnilo is a fork of [Pivot](https://github.com/implydata/pivot) which is currently available under commercial licence only.
@@ -52,15 +53,6 @@ or join the chat on [Slack](https://join.slack.com/t/turnilo/shared_invite/enQtO
 * [Node.js](https://nodejs.org/) - 14.x or 16.x version
 
 :warning:
-We test builds with 14.20.0 and 16.15.0
-
-:warning:
-Turnilo build works only up to 16.15.0 node version. 
-Due to new npm dependency resolving algorithm and old peer dependencies around sass Turnilo can't be built with newer node versions.
-Relevant [npm issue](https://github.com/npm/cli/issues/4998).
-We would be happy to accept any help with updating dependencies!
-
-:warning:
 Do not use `yarn` command for dependency management and project build, use `npm` instead.
 With `npm` builds are reproducible (thanks to package-lock.json) and even faster than with `yarn`.
 
@@ -72,18 +64,18 @@ Install Turnilo distribution using [npm](https://www.npmjs.com/).
 npm install -g turnilo
 ```
 
-Start off by running an example with Covid-19 and Wikipedia datasets
+Start off by running Turnilo with example datasets
 and open [http://localhost:9090/](http://localhost:9090/).
 
 ```
-turnilo --examples
+turnilo run-examples
 ```
 
-Or connect to the existing Druid broker using `--druid` command line option.
+Use `connect-druid` command to connect to the existing Druid broker.
 Turnilo will automatically introspect your Druid broker and figure out available datasets.
 
 ```
-turnilo --druid http[s]://druid-broker-hostname[:port]
+turnilo connect-druid http[s]://druid-broker-hostname[:port]
 ```
 
 ## Documentation
@@ -107,7 +99,7 @@ npm run build
 
 ### Run project
 
-Run Covid-19 and Wikipedia examples.
+Run example datasets.
 
 ```
 npm run start:examples
@@ -116,20 +108,20 @@ npm run start:examples
 Connect to the existing Druid broker.
 
 ```
-npm run start -- --druid http[s]://druid-broker-hostname[:port]
+npm run start -- connect-druid http[s]://druid-broker-hostname[:port]
 ```
 
 Connect to the existing Druid broker using your config file.
 
 ```
-npm run start -- --config path/to/config.yml
+npm run start -- run-config path/to/config.yml
 ```
 
 ### Run project in developer mode
 
 Every change in frontend code would recompile project and reload page.
 
-Run Covid-19 and Wikipedia examples.
+Run example datasets.
 
 ```
 npm run start:dev:examples
@@ -138,13 +130,13 @@ npm run start:dev:examples
 Connect to the existing Druid broker.
 
 ```
-npm run start:dev -- --druid http[s]://druid-broker-hostname[:port]
+npm run start:dev -- connect-druid http[s]://druid-broker-hostname[:port]
 ```
 
 Connect to the existing Druid broker using your config file.
 
 ```
-npm run start:dev -- --config path/to/config.yml
+npm run start:dev -- run-config path/to/config.yml
 ```
 
 
