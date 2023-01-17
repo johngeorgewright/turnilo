@@ -44,13 +44,13 @@ interface DashboardViewState {
 }
 
 export default class DashboardView extends React.Component<DashboardViewProps, DashboardViewState> {
-  static getDerivedStateFromProps({ hash, id, sources }: DashboardViewProps) {
+  static getDerivedStateFromProps({ appSettings, hash, id, sources }: DashboardViewProps) {
     const dashboard = dashboards[id];
     if (!dashboard) throw new Error(`Dashbaord ${id} has not been configured`);
     const dataCube = NamedArray.findByName(sources.dataCubes, dashboard.cube);
     const essence = hash
-      ? urlHashConverter.essenceFromHash(hash, dataCube)
-      : Essence.fromDataCube(dataCube);
+      ? urlHashConverter.essenceFromHash(hash, appSettings, dataCube)
+      : Essence.fromDataCube(dataCube, appSettings);
     return {
       dashboard: dashboards[id],
       dataCube,
@@ -148,11 +148,7 @@ export default class DashboardView extends React.Component<DashboardViewProps, D
     if (!this.state.dashboard) return null;
     return (
       <div className="dashboard-view">
-        <HeaderBar
-          customization={this.props.appSettings.customization}
-          title={this.state.dashboard.title}
-        >
-        </HeaderBar>
+        <HeaderBar title={this.state.dashboard.title} />
         <GlobalEventListener resize={this.setStage}/>
         <CubeContext.Provider value={this.constructDataCubeContext(this.state.essence, this.clicker)}>
           <DownloadableDatasetProvider>
