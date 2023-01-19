@@ -27,6 +27,7 @@ import { VisualizationSettings } from "../../../common/models/visualization-sett
 import { urlHashConverter } from "../../../common/utils/url-hash-converter/url-hash-converter";
 import { CubeContext } from "../cube-view/cube-context";
 import { HeaderBar } from "../../components/header-bar/header-bar";
+import { DashboardRow } from "./dashboard-row";
 
 interface DashboardViewProps {
   appSettings: ClientAppSettings;
@@ -163,18 +164,17 @@ export default class DashboardView extends React.Component<DashboardViewProps, D
                     removePartialFilter={removeTile}
                     addPartialFilter={addFilter}
                   />
-                  <div className="dashboard-panels">
-                    {this.state.dashboard.panels.map((panel, i) => (
-                      <DashboardPanel
+                  <div className="dashboard-rows">
+                    {this.state.dashboard.rows.map((columns, i) => (
+                      <DashboardRow
                         addFilter={addFilter}
                         appSettings={this.props.appSettings}
                         clicker={this.clicker}
                         dataCube={this.state.dataCube}
                         hash={this.props.hash}
                         key={i}
-                        measures={panel.measures}
+                        columns={columns}
                         partialFilter={filter}
-                        splits={panel.splits}
                         timekeeper={this.props.initTimekeeper}
                       />
                     ))}

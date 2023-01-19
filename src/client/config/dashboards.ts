@@ -18,7 +18,7 @@
 
 export interface Dashboard {
   cube: string;
-  panels: DashboardPanel[];
+  rows: DashboardPanel[][][];
   title: string;
 }
 
@@ -31,14 +31,20 @@ export const dashboards: Record<string, Dashboard> = {
   covid19: {
     cube: "covid19",
     title: "Covid19",
-    panels: [
-      {
-        measures: ["cases"]
-      },
-      {
-        measures: ["deaths"],
-        splits: ["time"]
-      }
+    rows: [
+      [
+        [
+          {
+            measures: ["tests"]
+          }
+        ],
+        [
+          {
+            measures: ["deaths"],
+            splits: ["time"]
+          }
+        ]
+      ]
     ]
   }
 };
