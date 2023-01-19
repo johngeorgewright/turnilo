@@ -18,11 +18,11 @@
 import React from "react";
 import { ChartProps } from "../../../common/models/chart-props/chart-props";
 import makeQuery from "../../../common/utils/query/visualization-query";
-import { ChartPanel, DefaultVisualizationControls, VisualizationProps } from "../../views/cube-view/center-panel/center-panel";
+import { ChartPanel, VisualizationProps } from "../../views/cube-view/center-panel/center-panel";
 import { Total } from "./total";
 import "./totals.scss";
 
-const BigNumbers: React.FunctionComponent<ChartProps> = ({ essence, data }) => {
+const TotalsComponent: React.FunctionComponent<ChartProps> = ({ essence, data }) => {
   const series = essence.getConcreteSeries().toArray();
   const datum = data.data[0];
   return <div className="total-container">
@@ -36,9 +36,10 @@ const BigNumbers: React.FunctionComponent<ChartProps> = ({ essence, data }) => {
   </div>;
 };
 
-export default function TotalsVisualization(props: VisualizationProps) {
-  return <React.Fragment>
-    <DefaultVisualizationControls {...props} />
-    <ChartPanel {...props} queryFactory={makeQuery} chartComponent={BigNumbers}/>
-  </React.Fragment>;
+export default function Totals(props: VisualizationProps) {
+  return <ChartPanel
+    {...props}
+    queryFactory={makeQuery}
+    chartComponent={TotalsComponent}
+  />;
 }

@@ -16,7 +16,7 @@
 
 import { OauthError } from "../../oauth/oauth";
 
-type ViewType = "home" | "cube" | "general-error" | "oauth-code-handler" | "oauth-message";
+type ViewType = "home" | "cube" | "dashboard" | "general-error" | "oauth-code-handler" | "oauth-message";
 
 interface ViewBase {
   viewType: ViewType;
@@ -29,6 +29,12 @@ interface Home extends ViewBase {
 interface Cube extends ViewBase {
   viewType: "cube";
   cubeName: string;
+  hash: string;
+}
+
+interface Dashboard extends ViewBase {
+  viewType: "dashboard";
+  dashboardName: string;
   hash: string;
 }
 
@@ -47,7 +53,7 @@ interface OauthMessage extends ViewBase {
   error: OauthError;
 }
 
-export type View = Home | Cube | GeneralError | OauthCodeHandler | OauthMessage;
+export type View = Home | Cube | Dashboard | GeneralError | OauthCodeHandler | OauthMessage;
 
 export const home: Home = {
   viewType: "home"
@@ -57,6 +63,12 @@ export const cube = (cubeName: string, hash: string): Cube => ({
   viewType: "cube",
   hash,
   cubeName
+});
+
+export const dashboard = (dashboardName: string, hash: string): Dashboard => ({
+  viewType: "dashboard",
+  hash,
+  dashboardName
 });
 
 export const generalError = (errorId?: string): GeneralError => ({
@@ -75,3 +87,17 @@ export const oauthMessageView = (error: OauthError): OauthMessage => ({
 });
 
 export const navigateToHome = () => window.location.href = "#";
+
+export function navigateTo(view: View): void {
+  switch (view.viewType) {
+    case "home":
+      window.location.href = "#";
+      break;
+    case "cube":
+      window.location.href = `#data/${view.cubeName}/${view.hash}`;
+      break;
+    case "dashboard":
+      window.location.href = `#dashboard/${view.dashboardName}/${view.hash}`;
+      break;
+  }
+}

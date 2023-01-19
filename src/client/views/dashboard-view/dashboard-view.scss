@@ -1,0 +1,50 @@
+@import '../../imports';
+
+$gap: 2px;
+$control-panel-height: $control-tile-height + $gap;
+
+.dashboard-view {
+  height: 100%;
+  padding-top: 42px;
+
+  .tile-row {
+    border-bottom-color: var(--background-base);
+    border-bottom-style: solid;
+    border-bottom-width: $gap;
+    height: 3em;
+  }
+
+  .dashboard-rows {
+    height: 100%;
+  }
+
+  .dashboard-rows,
+  .dashboard-row,
+  .dashboard-column {
+    display: flex;
+    gap: $gap;
+  }
+
+  .dashboard-rows,
+  .dashboard-column {
+    flex-direction: column;
+  }
+
+  .dashboard-row,
+  .dashboard-column,
+  .dashboard-panel {
+    flex-grow: 1;
+  }
+
+  .dashboard-panel {
+    min-width: 400px;
+    background-color: #fff;
+    overflow: hidden;
+  }
+
+  @for $columns from 1 through 4 {
+    .dashboard-#{$columns}-columns .dashboard-column {
+      width: calc(100% - #{$gap * ($columns - 1)});
+    }
+  }
+}

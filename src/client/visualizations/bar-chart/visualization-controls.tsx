@@ -16,20 +16,12 @@
  */
 
 import React from "react";
-import { or } from "../../../common/utils/functional/functional";
-import makeQuery from "../../../common/utils/query/visualization-query";
-import { Predicates } from "../../../common/utils/rules/predicates";
-import {
-  ChartPanel,
-  VisualizationProps
-} from "../../views/cube-view/center-panel/center-panel";
-import "./bar-chart.scss";
-import { BarChart as ImprovedBarChartComponent } from "./improved-bar-chart/bar-chart";
+import { TimeSeriesVisualizationControls } from "../../components/timeseries-visualization-controls/visualization-controls";
+import { DefaultVisualizationControls, VisualizationProps } from "../../views/cube-view/center-panel/center-panel";
 import { newVersionSupports } from "./improved-bar-chart/support";
-import { BarChart as BarChartComponent } from "./old-bar-chart/old-bar-chart";
 
-export default function BarChart(props: VisualizationProps) {
+export function BarChartVisualizationControls(props: VisualizationProps) {
   return newVersionSupports(props.essence)
-    ? <ChartPanel {...props} queryFactory={makeQuery} chartComponent={ImprovedBarChartComponent} />
-    : <ChartPanel {...props} queryFactory={makeQuery} chartComponent={BarChartComponent}/>;
+    ? <TimeSeriesVisualizationControls {...props} />
+    : <DefaultVisualizationControls {...props} />;
 }
