@@ -37,6 +37,10 @@
     &:hover:not(.disabled), &.selected {
       @include css-variable(background-color, item-dimension-hover);
     }
+
+    &.excluded .reading .values {
+      text-decoration: line-through;
+    }
   }
 
   &.measure {
